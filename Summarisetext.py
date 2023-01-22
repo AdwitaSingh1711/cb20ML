@@ -4,10 +4,10 @@ from string import punctuation
 from heapq import nlargest
 
 
-text_file = open("/Users/adwitasingh/Documents/GitHub/cb20ML/eng.txt", "r")
-text = text_file.read()
-text_file.close()
-print(text)
+#text_file = open("/Users/adwitasingh/Documents/GitHub/cb20ML/eng.txt", "r")
+#text = text_file.read()
+#text_file.close()
+#print(text)
 
 def summarize(text, per):
     nlp = spacy.load('en_core_web_sm')
@@ -39,22 +39,27 @@ def summarize(text, per):
     summary=''.join(final_summary)
     return summary
 
+GeneratedSum = summarize(text,per)    
+
+#with open('summariser.pkl', 'wb') as file:
+#    pickle.dump(GeneratedSum, file)
+
 #f= open("generatedsummary.txt","w+")
 #f.write(summarize(text, 1.5))
 #f.close()
 
-def print_data(data):
-    print(data)
+#def print_data(data):
+ #   print(data)
 
-def output_file(filename, data):
-    file = open(filename, "w+")
-    file.write(data)
-    file.close()
+#def output_file(filename, data):
+#    file = open(filename, "w+")
+#    file.write(data)
+#    file.close()
 
-def main():
-    generatedsummary = summarize(text, 0.5)
-    print_data(generatedsummary)
-    output_file("generatedsummary.txt", generatedsummary)
+#def main():
+#    generatedsummary = summarize(text, 0.5)
+#    print_data(generatedsummary)
+#    output_file("generatedsummary.txt", generatedsummary)
 
-if  __name__ == '__main__':
-    main()
+#if  __name__ == '__main__':
+#    main()

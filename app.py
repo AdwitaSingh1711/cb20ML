@@ -3,7 +3,7 @@ from Summarisetext import summarize
 from OCR import process_image
 
 app = Flask(__name__)
-@app.route("/summariser",method=["POST"])
+@app.route("/",method=["POST"])
 
 #summary fetching function
 def response():
@@ -16,5 +16,5 @@ def response():
                     'Summary': result,
                     })
 
-if __name__ == "__main__"
+if __name__ == "__main__":
     app.run(host="0.0.0.0")
