@@ -1,9 +1,14 @@
 from PIL import Image
 import pytesseract
+import re
 
 def ocr_core(filename):
-   text = pytesseract.image_to_string(Image.open(filename))
-   return text
+    text = pytesseract.image_to_string(Image.open(filename))
+    try:
+        result = re.search(r"([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])",text).group(0)
+        return result
+    except:
+        return "Image is not clear. Rescan the image"
 
 #def print_data(data):
    # print(data)

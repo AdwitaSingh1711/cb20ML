@@ -1,9 +1,18 @@
-from flask import Flask, request, jsonify, render_template
-from PIL import Image
-import pytesseract
+from flask import Flask, render_template, request, url_for, Response
+from flask_restful import Api, Resource, reqparse
+import cv2
 import os
+from matplotlib import pyplot as plt
+import numpy as np
+from logging import FileHandler,WARNING
+import re
+from werkzeug.utils import secure_filename
+from OCR import ocr_core
 
-app = Flask(__name__)
+
+app = Flask(__name__, template_folder='templates')
+file_handler = FileHandler('errorlog.txt')
+file_handler.setLevel(WARNING)
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 def allowed_file(filename):
@@ -21,22 +30,31 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def upload_page():
     if request.method == 'POST':
         if 'file' not in request.files:
-            return render_template('upload.html', msg = 'No file selected')
+            return render_template('upload.html', msg = 'Please select a file')
         file = request.files['file']
-    if file.filename == '':
-        return render_template('upload.html', msg = 'No file')
-    if file and allowed_file(file.filename):
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-        extracted = ocr_core(file)
-        return render_template('upload.html', 
-                                    msg = 'OCR completed',
-                                    extracted = extracted, 
-                                    img_src = UPLOAD_FOLDER + file.filename)
+        if file.filename == '':
+            return render_template('upload.html', msg = "File isn't present")
+        if file and allowed_file(file.filename):
+            filename = str(secure_filename(file.filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'])+file.filename)
+            extracted = ocr_core(file)
+            extension=filename.split(".")
+            extension=str(extension[1])
+            source=UPLOAD_FOLDER+"/"+filename
+            destination=UPLOAD_FOLDER+extracted+"."+extension
+            # file.save(UPLOAD_FOLDER+=file.filename)
+        	#source=UPLOAD_FOLDER+"/"+file.filename
+        	#destination=UPLOAD_FOLDER+"\"+extracted+'.jpg'
+            os.rename(source,destination) #renaming the uploaded file
+            return render_template('upload.html',
+        							extracted = extracted, 
+        							img_src = UPLOAD_FOLDER + file.filename)
     else:
         return render_template('upload.html')
 
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 
 
@@ -63,8 +81,7 @@ def response():
 if __name__ == "__main__":
     app.run(host="0.0.0.0")'''
 
-
-    '''@app.route("/ocr", methods=["POST"])
+'''@app.route("/ocr", methods=["POST"])
 def ocr_api():
     image = request.files.get("image")
     image = Image.open(image)
